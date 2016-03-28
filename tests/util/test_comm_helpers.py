@@ -18,7 +18,14 @@ class TestCommHelpers(unittest.TestCase):
 		("M117 Test \\; foo", "M117 Test \\; foo"),
 		("M117 Test \\\\; foo", "M117 Test \\\\"),
 		("M117 Test \\\\\\; foo", "M117 Test \\\\\\; foo"),
-		("; foo", "")
+		("; foo", ""),
+		("M117 (foo) Test", "M117 Test"),
+		("M117 (foo) Test (foo)", "M117 Test"),
+		("M117 (foo) Test ; foo", "M117 Test"),
+		("M117 \\(foo) Test", "M117 \\(foo) Test"),
+		("M117 \\\\(foo) Test", "M117 \\\\ Test"),
+		("M117 \\\\\\(foo) Test", "M117 \\\\\\(foo) Test"),
+		("(foo)", "")
 	)
 	@unpack
 	def test_strip_comment(self, input, expected):
