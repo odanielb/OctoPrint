@@ -2261,20 +2261,48 @@ def apply_temperature_offsets(line, offsets, current_tool=None):
 
 	return line[:match.start("temperature")] + "%f" % (temperature + offset) + line[match.end("temperature"):]
 
+def parentheses_match(line):
+	'''Takes in a string that begins with a '(' and returns the index of the matching ')'
+	ex: '(example here!)' => 14
+	ex: '(examp(le) yes)' => 14
+	
+	The index can be added to the actual index of '(' in the full line in order to find the span of (...)'''
+	stack = []
+	for i, c in enumerate(line):
+		if c == "(": 
+			# internal parentheses
+			stack.append(c)
+		elif c == ")":
+			stack.pop()
+			if not stack: 
+				return i
+		else:
+			pass
+	
 def strip_comment(line):
-	if not ";" in line:
+	if not ";" in line or not "(" in line:
 		# shortcut
 		return line
 
 	escaped = False
 	result = []
-	for c in line:
+	comment = False #start the state thing
+	end_parendex = 0
+	for i, c in enumerate(line):
 		if c == ";" and not escaped:
-			break
-		result += c
-		escaped = (c == "\\") and not escaped
+			break #break the line so it cuts out the ";" comments.
+		elif c == "(" and not escaped: #if while reading the line it finds "("
+			comment = True #turn on the state to enter into the next if-statement
+			end_parendex = parentheses_match(line) #and call the matching function
+			
+		if comment and i == end_parendex: #if comment is True and index is the end parenthesis
+			comment == False #change state to continue reading the line meaning that there is no parenthetical comment	
+		elif not comment:
+			result += c #result is the end code without the comments
+			
+		escaped = (c == "\\") and not escaped 	#escaped becomes True after odd #s of \\
 	return "".join(result)
-
+	
 def process_gcode_line(line, offsets=None, current_tool=None):
 	line = strip_comment(line).strip()
 	if not len(line):
