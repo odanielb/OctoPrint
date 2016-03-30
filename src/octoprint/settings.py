@@ -90,6 +90,13 @@ default_settings = {
 		"longRunningCommands": ["G4", "G28", "G29", "G30", "G32", "M400", "M226"],
 		"checksumRequiringCommands": ["M110"],
 		"helloCommand": "M110 N0",
+		"disconnectOnErrors": True,
+		"ignoreErrorsFromFirmware": False,
+		"logResends": True,
+		"supportResendsWithoutOk": False,
+
+		# command specific flags
+		"triggerOkForM29": True
 	},
 	"server": {
 		"host": "0.0.0.0",
@@ -140,7 +147,8 @@ default_settings = {
 			"options": {},
 			"postRoll": 0,
 			"fps": 25
-		}
+		},
+		"cleanTmpAfterDays": 7
 	},
 	"gcodeViewer": {
 		"enabled": True,
@@ -312,6 +320,7 @@ default_settings = {
 			"waitInterval": 1.0,
 			"supportM112": True,
 			"echoOnM117": True,
+			"brokenM29": True,
 			"supportF": False
 		}
 	}
